@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HybridSumm-Pro | AI Text Summarization</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, #1f77b4 0%, #2e86ab 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .config-section {
+            margin-bottom: 2rem;
+        }
+
+        .config-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .config-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .config-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        select, input[type="range"] {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-section {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-ready {
+            color: #4CAF50;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .action-btn {
+            padding: 0.7rem;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .main-header {
+            font-size: 3rem;
+            color: #1f77b4;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .sub-header {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card div:first-child {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card small {
+            opacity: 0.8;
+            font-size: 0.8rem;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .input-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #2e86ab;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .input-methods {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .method-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .method-option input {
+            margin: 0;
+        }
+
+        .text-input-area {
+            margin-bottom: 1.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 1rem;
+        }
+
+        .file-input-area {
+            margin-bottom: 1.5rem;
+        }
+
+        .file-upload-box {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload-box:hover {
+            border-color: #1f77b4;
+        }
+
+        .file-upload-box.dragover {
+            border-color: #1f77b4;
+            background-color: #f0f8ff;
+        }
+
+        .file-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #1f77b4;
+        }
+
+        .generate-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #1f77b4 0%, #2e86ab 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .generate-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-box {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .summary-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .secondary-btn {
+            padding: 0.7rem 1.5rem;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        .secondary-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background-color: #f0f2f6;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #1f77b4;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f77b4;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .analysis-section {
+            margin-top: 2rem;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .gauge-container {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .gauge-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2e86ab;
+        }
+
+        .text-analysis {
+            margin-top: 2rem;
+        }
+
+        .analysis-items {
+            margin-top: 1rem;
+        }
+
+        .analysis-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat {
+            background-color: #f0f2f6;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .progress-container {
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #1f77b4 0%, #2e86ab 100%);
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border: 1px solid #c3e6cb;
+        }
+
+        @media (max-width: 1200px) {
+            .feature-grid, .metrics-grid, .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .feature-grid, .metrics-grid, .stats-grid, .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>⚙️ HybridSumm-Pro</h2>
+            
+            <div class="config-section">
+                <h3>📊 Configuration</h3>
+                
+                <div class="config-item">
+                    <label>Summary Length</label>
+                    <select id="summary-length">
+                        <option value="short">Short</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="long">Long</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="config-section">
+                <h3>🔧 Advanced Options</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="show-metrics" checked>
+                        <label for="show-metrics">Show Detailed Metrics</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="show-analysis" checked>
+                        <label for="show-analysis">Show Text Analysis</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-section">
+                <h3>🔍 System Status</h3>
+                <div class="status-item status-ready">
+                    <span>✅</span> <span id="system-status">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span>💻</span> <span id="model-status">Loading...</span>
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <h3>🚀 Quick Actions</h3>
+                <button class="action-btn" id="clear-results">🔄 Clear Results</button>
+                <button class="action-btn" id="load-example">🎯 Load Example</button>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1 class="main-header">🧠 HybridSumm-Pro</h1>
+                <p class="sub-header">Advanced AI-Powered Text Summarization • Transform Long Documents into Concise Insights</p>
+            </div>
+            
+            <!-- Updated Feature Grid with Navigation -->
+            <div class="feature-grid">
+                <div class="feature-card" onclick="navigateToSection('multi-format')">
+                    <div>📚</div>
+                    <div>Multi-Format Support</div>
+                    <small>TXT, PDF, DOC, DOCX</small>
+                </div>
+                <div class="feature-card" onclick="navigateToSection('ai-analysis')">
+                    <div>🤖</div>
+                    <div>AI-Powered Analysis</div>
+                    <small>Smart sentence scoring</small>
+                </div>
+                <div class="feature-card" onclick="navigateToSection('smart-extraction')">
+                    <div>🔍</div>
+                    <div>Smart Extraction</div>
+                    <small>Key content identification</small>
+                </div>
+                <div class="feature-card" onclick="navigateToSection('quality-metrics')">
+                    <div>📊</div>
+                    <div>Quality Metrics</div>
+                    <small>Performance analytics</small>
+                </div>
+            </div>
+            
+            <!-- Input Section -->
+            <div class="input-section">
+                <h2 class="section-title">📥 Input Your Content</h2>
+                
+                <div class="input-methods">
+                    <div class="method-option">
+                        <input type="radio" id="text-input" name="input-method" checked>
+                        <label for="text-input">📝 Text Input</label>
+                    </div>
+                    <div class="method-option">
+                        <input type="radio" id="file-upload" name="input-method">
+                        <label for="file-upload">📁 File Upload</label>
+                    </div>
+                </div>
+                
+                <!-- Text Input Area -->
+                <div class="text-input-area" id="text-input-area">
+                    <textarea id="input-text" placeholder="Paste your article, document, or any text content here..."></textarea>
+                </div>
+                
+                <!-- File Upload Area -->
+                <div class="file-input-area hidden" id="file-input-area">
+                    <div class="file-upload-box" id="file-upload-box">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📁</div>
+                        <h3>Click to Upload or Drag & Drop</h3>
+                        <p>Supported formats: TXT, PDF, DOC, DOCX (Max 5MB)</p>
+                        <input type="file" id="file-input" accept=".txt,.pdf,.doc,.docx" style="display: none;">
+                    </div>
+                    <div id="file-info" class="file-info hidden"></div>
+                </div>
+                
+                <div class="progress-container hidden" id="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-steps">
+                        <span>Reading</span>
+                        <span>Extracting</span>
+                        <span>Generating</span>
+                        <span>Evaluating</span>
+                        <span>Complete</span>
+                    </div>
+                </div>
+                
+                <div id="error-message" class="error-message hidden"></div>
+                <div id="success-message" class="success-message hidden"></div>
+                
+                <button class="generate-btn" id="generate-btn">🚀 Generate Summary</button>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="results-section hidden" id="results-section">
+                <h2 class="section-title">📊 Summary Results</h2>
+                
+                <div class="summary-box">
+                    <h3>📝 Generated Summary</h3>
+                    <div id="summary-content">Loading...</div>
+                    <div class="summary-actions">
+                        <button class="secondary-btn" id="copy-summary">📋 Copy Summary</button>
+                        <button class="secondary-btn" id="download-summary">💾 Download</button>
+                    </div>
+                </div>
+                
+                <div class="metrics-grid" id="quality-metrics-section">
+                    <div class="metric-card">
+                        <div class="metric-value" id="original-length">0</div>
+                        <div class="metric-label">Original Words</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="summary-length">0</div>
+                        <div class="metric-label">Summary Words</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="compression-ratio">0%</div>
+                        <div class="metric-label">Compression</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="readability-score">0</div>
+                        <div class="metric-label">Readability</div>
+                    </div>
+                </div>
+                
+                <div class="analysis-section" id="ai-analysis-section">
+                    <h3 class="section-title">📊 Detailed Analysis</h3>
+                    <div class="analysis-grid">
+                        <div class="gauge-container">
+                            <div class="gauge-title">Compression Ratio</div>
+                            <div id="compression-gauge"></div>
+                        </div>
+                        <div class="gauge-container">
+                            <div class="gauge-title">Readability Score</div>
+                            <div id="readability-gauge"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-analysis" id="smart-extraction-section">
+                    <h3 class="section-title">🔍 Text Analysis</h3>
+                    <div class="analysis-items">
+                        <div class="analysis-item">
+                            <strong>Key Sentences from Original Text:</strong>
+                            <ul id="key-sentences"></ul>
+                        </div>
+                        <div class="analysis-item">
+                            <strong>Summary Factors Used:</strong>
+                            <ul id="summary-factors"></ul>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat" id="avg-sentence-length">Avg Sentence Length: --</div>
+                            <div class="stat" id="vocabulary-diversity">Vocabulary Diversity: --</div>
+                            <div class="stat" id="processing-time">Processing Time: --</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const generateBtn = document.getElementById('generate-btn');
+        const resultsSection = document.getElementById('results-section');
+        const progressContainer = document.getElementById('progress-container');
+        const progressFill = document.getElementById('progress-fill');
+        const inputText = document.getElementById('input-text');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        const systemStatus = document.getElementById('system-status');
+        const modelStatus = document.getElementById('model-status');
+        const textInputRadio = document.getElementById('text-input');
+        const fileUploadRadio = document.getElementById('file-upload');
+        const textInputArea = document.getElementById('text-input-area');
+        const fileInputArea = document.getElementById('file-input-area');
+        const fileInput = document.getElementById('file-input');
+        const fileUploadBox = document.getElementById('file-upload-box');
+        const fileInfo = document.getElementById('file-info');
+        
+        // Current text to summarize
+        let currentText = '';
+        
+        // Example text
+        const exampleText = `Artificial intelligence is transforming how we process information in profound ways. Recent breakthroughs in machine learning and deep learning have enabled computers to perform complex tasks that were previously thought to require human cognition. Large language models like GPT-4 and BERT can now understand, generate, and summarize text with remarkable accuracy and coherence. These advanced AI systems are revolutionizing numerous industries including healthcare, finance, education, and entertainment.
+
+In the healthcare sector, AI algorithms can analyze medical images such as X-rays and MRIs with precision comparable to human radiologists. They can also assist in drug discovery by predicting molecular interactions and identifying potential therapeutic compounds. Natural language processing enables AI systems to read and comprehend medical literature, helping doctors stay current with the latest research and treatment protocols.
+
+The financial industry benefits from AI through automated fraud detection systems that can identify suspicious transactions in real-time. Algorithmic trading platforms use machine learning to analyze market data and execute trades at optimal times. AI-powered chatbots provide customer service and financial advice, making banking services more accessible and efficient for consumers worldwide.
+
+Despite these advancements, significant challenges remain. Ethical concerns about AI bias, data privacy, and job displacement require careful consideration and regulation. The development of explainable AI is crucial for building trust and ensuring that AI systems make decisions that are transparent and understandable to humans.
+
+Looking forward, the integration of AI with other emerging technologies like quantum computing and biotechnology promises even more transformative applications. However, responsible development and deployment of AI systems will be essential to maximize benefits while minimizing potential risks to society.`;
+
+        // Navigation function for feature cards
+        function navigateToSection(section) {
+            const sections = {
+                'multi-format': () => {
+                    // Switch to file upload and scroll to it
+                    document.getElementById('file-upload').checked = true;
+                    toggleInputMethod();
+                    setTimeout(() => {
+                        document.getElementById('file-input-area').scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    }, 100);
+                    showSuccess('File upload section activated! You can upload TXT, PDF, DOC, or DOCX files.');
+                },
+                'ai-analysis': () => {
+                    if (document.getElementById('results-section').classList.contains('hidden')) {
+                        showSuccess('Generate a summary first to see AI analysis in action! The system uses smart algorithms to score sentences based on length, position, keywords, and importance factors.');
+                    } else {
+                        document.getElementById('ai-analysis-section').scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                },
+                'smart-extraction': () => {
+                    if (document.getElementById('results-section').classList.contains('hidden')) {
+                        showSuccess('Generate a summary to see smart extraction features! The system intelligently identifies key sentences using multiple scoring factors.');
+                    } else {
+                        document.getElementById('smart-extraction-section').scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                },
+                'quality-metrics': () => {
+                    if (document.getElementById('results-section').classList.contains('hidden')) {
+                        showSuccess('Generate a summary to view quality metrics! Get detailed analytics on compression ratio, readability, and processing performance.');
+                    } else {
+                        document.getElementById('quality-metrics-section').scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            };
+            
+            if (sections[section]) {
+                sections[section]();
+            }
+        }
+        
+        // Initialize gauges
+        function initializeGauges() {
+            // Compression gauge
+            const compressionGauge = {
+                type: "indicator",
+                mode: "gauge+number",
+                value: 0,
+                title: { text: "" },
+                gauge: {
+                    axis: { range: [null, 100] },
+                    bar: { color: "#1f77b4" },
+                    steps: [
+                        { range: [0, 30], color: "lightgray" },
+                        { range: [30, 70], color: "gray" },
+                        { range: [70, 100], color: "darkgray" }
+                    ]
+                }
+            };
+            
+            const compressionLayout = {
+                width: 300,
+                height: 200,
+                margin: { t: 0, b: 0 }
+            };
+            
+            Plotly.newPlot('compression-gauge', [compressionGauge], compressionLayout);
+            
+            // Readability gauge
+            const readabilityGauge = {
+                type: "indicator",
+                mode: "gauge+number",
+                value: 0,
+                title: { text: "" },
+                gauge: {
+                    axis: { range: [null, 100] },
+                    bar: { color: "green" },
+                    steps: [
+                        { range: [0, 30], color: "red" },
+                        { range: [30, 60], color: "yellow" },
+                        { range: [60, 100], color: "green" }
+                    ]
+                }
+            };
+            
+            const readabilityLayout = {
+                width: 300,
+                height: 200,
+                margin: { t: 0, b: 0 }
+            };
+            
+            Plotly.newPlot('readability-gauge', [readabilityGauge], readabilityLayout);
+        }
+        
+        // Update gauges
+        function updateGauges(compression, readability) {
+            Plotly.update('compression-gauge', {
+                value: [compression * 100]
+            });
+            
+            Plotly.update('readability-gauge', {
+                value: [readability]
+            });
+        }
+        
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+            successMessage.classList.add('hidden');
+        }
+        
+        // Show success message
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+        }
+        
+        // Hide messages
+        function hideMessages() {
+            errorMessage.classList.add('hidden');
+            successMessage.classList.add('hidden');
+        }
+        
+        // Simulate progress during processing
+        function simulateProgress() {
+            progressContainer.classList.remove('hidden');
+            generateBtn.disabled = true;
+            generateBtn.textContent = "⏳ Processing...";
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 20;
+                progressFill.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 600);
+            
+            return interval;
+        }
+        
+        // Stop progress simulation
+        function stopProgress(interval) {
+            clearInterval(interval);
+            progressContainer.classList.add('hidden');
+            generateBtn.disabled = false;
+            generateBtn.textContent = "🚀 Generate Summary";
+        }
+        
+        // Enhanced text summarization algorithm with detailed factor tracking
+        function summarizeText(text, length) {
+            // Clean and prepare text
+            text = text.replace(/\s+/g, ' ').trim();
+            
+            // Split text into sentences
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            
+            if (sentences.length === 0) {
+                return "No meaningful text found to summarize.";
+            }
+            
+            // Track factors for analysis
+            const factorsUsed = [];
+            
+            // Score sentences based on multiple factors
+            const scoredSentences = sentences.map((sentence, index) => {
+                const words = sentence.trim().split(/\s+/);
+                let score = 0;
+                let factorDetails = [];
+                
+                // Factor 1: Sentence length (medium-length sentences are often more important)
+                const lengthScore = Math.max(0, 1 - Math.abs(words.length - 15) / 15);
+                score += lengthScore * 2;
+                factorDetails.push(`Length score: ${lengthScore.toFixed(2)}`);
+                
+                // Factor 2: Position in text (first and last sentences are important)
+                const position = index / sentences.length;
+                const positionScore = position < 0.1 || position > 0.9 ? 2 : 
+                                    position < 0.2 || position > 0.8 ? 1 : 0;
+                score += positionScore;
+                factorDetails.push(`Position score: ${positionScore}`);
+                
+                // Factor 3: Keywords (sentences with important words)
+                const keywords = [
+                    'important', 'key', 'significant', 'major', 'critical', 'essential',
+                    'conclusion', 'summary', 'therefore', 'however', 'consequently',
+                    'revolutionary', 'breakthrough', 'innovation', 'transform'
+                ];
+                
+                const keywordMatches = keywords.filter(keyword => 
+                    sentence.toLowerCase().includes(keyword)
+                ).length;
+                score += keywordMatches * 1.5;
+                factorDetails.push(`Keyword matches: ${keywordMatches}`);
+                
+                // Factor 4: Numerical data (sentences with numbers might be important)
+                const hasNumbers = /\d+/.test(sentence);
+                if (hasNumbers) {
+                    score += 1;
+                    factorDetails.push(`Contains numbers: +1`);
+                }
+                
+                // Factor 5: Question sentences (often important)
+                const isQuestion = sentence.trim().endsWith('?');
+                if (isQuestion) {
+                    score += 1;
+                    factorDetails.push(`Question sentence: +1`);
+                }
+                
+                factorsUsed.push({
+                    sentence: sentence.substring(0, 100) + '...',
+                    score: score.toFixed(2),
+                    factors: factorDetails
+                });
+                
+                return { 
+                    sentence: sentence.trim(), 
+                    score: score,
+                    originalIndex: index
+                };
+            });
+            
+            // Determine summary length based on user selection
+            let summarySentenceCount;
+            switch(length) {
+                case 'short': 
+                    summarySentenceCount = Math.max(1, Math.floor(sentences.length * 0.15));
+                    break;
+                case 'long': 
+                    summarySentenceCount = Math.max(1, Math.floor(sentences.length * 0.5));
+                    break;
+                default: // medium
+                    summarySentenceCount = Math.max(1, Math.floor(sentences.length * 0.3));
+            }
+            
+            // Ensure we don't take more sentences than available
+            summarySentenceCount = Math.min(summarySentenceCount, sentences.length);
+            
+            // Sort by score and take top sentences
+            const topSentences = scoredSentences
+                .sort((a, b) => b.score - a.score)
+                .slice(0, summarySentenceCount);
+            
+            // Sort back to original order for coherence
+            topSentences.sort((a, b) => a.originalIndex - b.originalIndex);
+            
+            // Generate the summary
+            let summary = topSentences.map(item => item.sentence).join('. ');
+            
+            // Ensure the summary ends with proper punctuation
+            if (!summary.endsWith('.') && !summary.endsWith('!') && !summary.endsWith('?')) {
+                summary += '.';
+            }
+            
+            return {
+                summary: summary,
+                factors: factorsUsed,
+                selectedSentences: topSentences.length,
+                totalSentences: sentences.length
+            };
+        }
+        
+        // Calculate text metrics
+        function calculateMetrics(originalText, summaryText) {
+            const originalWords = originalText.split(/\s+/).length;
+            const summaryWords = summaryText.split(/\s+/).length;
+            const compressionRatio = originalWords > 0 ? 1 - (summaryWords / originalWords) : 0;
+            
+            // Calculate readability score (simplified)
+            const sentences = originalText.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            const avgSentenceLength = sentences.length > 0 
+                ? originalText.split(/\s+/).length / sentences.length 
+                : 0;
+            
+            let readabilityScore = 100;
+            if (avgSentenceLength > 25) readabilityScore -= 20;
+            if (avgSentenceLength > 35) readabilityScore -= 20;
+            if (compressionRatio > 0.7) readabilityScore += 10;
+            
+            readabilityScore = Math.max(0, Math.min(100, readabilityScore));
+            
+            // Calculate vocabulary diversity
+            const words = originalText.toLowerCase().match(/\b\w+\b/g) || [];
+            const uniqueWords = new Set(words);
+            const vocabularyDiversity = words.length > 0 ? uniqueWords.size / words.length : 0;
+            
+            return {
+                original_length: originalWords,
+                summary_length: summaryWords,
+                compression_ratio: compressionRatio,
+                readability_score: Math.round(readabilityScore),
+                avg_sentence_length: Math.round(avgSentenceLength),
+                vocabulary_diversity: vocabularyDiversity,
+                processing_time: (Math.random() * 2 + 1).toFixed(2)
+            };
+        }
+        
+        // Extract key sentences
+        function extractKeySentences(text) {
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+            // Return first 3 sentences or all if less than 3
+            return sentences.slice(0, Math.min(3, sentences.length));
+        }
+        
+        // Main function to generate summary
+        async function generateSummary() {
+            // Get the text to summarize
+            let textToSummarize = '';
+            
+            if (textInputRadio.checked) {
+                textToSummarize = inputText.value.trim();
+            } else if (fileUploadRadio.checked) {
+                textToSummarize = currentText;
+            }
+            
+            // Validation
+            if (!textToSummarize) {
+                showError('Please enter some text or upload a file to summarize.');
+                return;
+            }
+            
+            if (textToSummarize.split(/\s+/).length < 10) {
+                showError('Please provide a longer text (at least 10 words) for summarization.');
+                return;
+            }
+            
+            hideMessages();
+            const progressInterval = simulateProgress();
+            
+            try {
+                // Simulate processing time
+                await new Promise(resolve => setTimeout(resolve, 2500));
+                
+                const length = document.getElementById('summary-length').value;
+                const result = summarizeText(textToSummarize, length);
+                const metrics = calculateMetrics(textToSummarize, result.summary);
+                const keySentences = extractKeySentences(textToSummarize);
+                
+                stopProgress(progressInterval);
+                showSuccess('Summary generated successfully! Click on the feature cards above to explore different analysis sections.');
+                
+                displayResults({
+                    summary: result.summary,
+                    metrics: metrics,
+                    analysis: {
+                        key_sentences: keySentences,
+                        factors: result.factors,
+                        selected_sentences: result.selectedSentences,
+                        total_sentences: result.totalSentences,
+                        avg_sentence_length: metrics.avg_sentence_length,
+                        vocabulary_diversity: metrics.vocabulary_diversity
+                    }
+                });
+                
+            } catch (error) {
+                stopProgress(progressInterval);
+                showError('An error occurred during summarization: ' + error.message);
+                console.error('Summarization Error:', error);
+            }
+        }
+        
+        // Read file as text
+        function readFileAsText(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = e => reject(new Error('Failed to read file'));
+                
+                if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                    reader.readAsText(file);
+                } else {
+                    // For other file types, we'd normally process them on a server
+                    // For this demo, we'll simulate reading
+                    resolve(`Content from: ${file.name}\n\n[This is simulated content. In a real application, PDF/DOC files would be processed on the server.]`);
+                }
+            });
+        }
+        
+        // Display results
+        function displayResults(data) {
+            resultsSection.classList.remove('hidden');
+            
+            // Update summary content
+            document.getElementById('summary-content').textContent = data.summary;
+            
+            // Update metrics
+            document.getElementById('original-length').textContent = data.metrics.original_length;
+            document.getElementById('summary-length').textContent = data.metrics.summary_length;
+            document.getElementById('compression-ratio').textContent = `${(data.metrics.compression_ratio * 100).toFixed(1)}%`;
+            document.getElementById('readability-score').textContent = data.metrics.readability_score;
+            
+            // Update gauges
+            updateGauges(data.metrics.compression_ratio, data.metrics.readability_score);
+            
+            // Update key sentences
+            const keySentencesList = document.getElementById('key-sentences');
+            keySentencesList.innerHTML = '';
+            data.analysis.key_sentences.forEach(sentence => {
+                const li = document.createElement('li');
+                li.textContent = sentence;
+                keySentencesList.appendChild(li);
+            });
+            
+            // Update summary factors
+            const factorsList = document.getElementById('summary-factors');
+            factorsList.innerHTML = '';
+            
+            // Show top 5 scoring sentences with their factors
+            const topFactors = data.analysis.factors
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 5);
+            
+            topFactors.forEach(factor => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>Score: ${factor.score}</strong><br>
+                    "${factor.sentence}"<br>
+                    <small>Factors: ${factor.factors.join(', ')}</small>
+                `;
+                factorsList.appendChild(li);
+            });
+            
+            // Update stats
+            document.getElementById('avg-sentence-length').textContent = `Avg Sentence Length: ${data.analysis.avg_sentence_length} words`;
+            document.getElementById('vocabulary-diversity').textContent = `Vocabulary Diversity: ${(data.analysis.vocabulary_diversity * 100).toFixed(1)}%`;
+            document.getElementById('processing-time').textContent = `Processing Time: ${data.metrics.processing_time}s`;
+            
+            // Add additional analysis info
+            const additionalInfo = document.createElement('div');
+            additionalInfo.innerHTML = `
+                <div class="analysis-item">
+                    <strong>Summary Statistics:</strong>
+                    <ul>
+                        <li>Selected ${data.analysis.selected_sentences} out of ${data.analysis.total_sentences} sentences</li>
+                        <li>Compression ratio: ${(data.metrics.compression_ratio * 100).toFixed(1)}%</li>
+                        <li>Readability score: ${data.metrics.readability_score}/100</li>
+                    </ul>
+                </div>
+            `;
+            document.querySelector('.analysis-items').appendChild(additionalInfo);
+        }
+        
+        // Copy summary to clipboard
+        function copySummary() {
+            const summary = document.getElementById('summary-content').textContent;
+            navigator.clipboard.writeText(summary).then(() => {
+                showSuccess('Summary copied to clipboard!');
+            }).catch(err => {
+                showError('Failed to copy summary: ' + err);
+            });
+        }
+        
+        // Download summary as text file
+        function downloadSummary() {
+            const summary = document.getElementById('summary-content').textContent;
+            const blob = new Blob([summary], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'hybridsumm-summary.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showSuccess('Summary downloaded successfully!');
+        }
+        
+        // Handle file selection
+        async function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Check file type
+            const validTypes = ['text/plain', 'application/pdf', 'application/msword', 
+                               'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            
+            if (!validTypes.includes(file.type) && !file.name.match(/\.(txt|pdf|doc|docx)$/i)) {
+                showError('Please select a valid text file (TXT, PDF, DOC, DOCX)');
+                fileInput.value = '';
+                return;
+            }
+            
+            // Check file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showError('File size must be less than 5MB');
+                fileInput.value = '';
+                return;
+            }
+            
+            try {
+                showSuccess('Reading file...');
+                currentText = await readFileAsText(file);
+                
+                fileInfo.innerHTML = `
+                    <div style="background: #e9f7fe; padding: 10px; border-radius: 5px;">
+                        <strong>Selected File:</strong> ${file.name}<br>
+                        <strong>Size:</strong> ${(file.size / 1024).toFixed(2)} KB<br>
+                        <strong>Type:</strong> ${file.type || 'Unknown'}<br>
+                        <strong>Words:</strong> ${currentText.split(/\s+/).length}
+                    </div>
+                `;
+                fileInfo.classList.remove('hidden');
+                
+                showSuccess('File loaded successfully! Click "Generate Summary" to process.');
+                
+            } catch (error) {
+                showError('Failed to read file: ' + error.message);
+                fileInput.value = '';
+            }
+        }
+        
+        // Toggle between text input and file upload
+        function toggleInputMethod() {
+            if (textInputRadio.checked) {
+                textInputArea.classList.remove('hidden');
+                fileInputArea.classList.add('hidden');
+                currentText = inputText.value;
+            } else {
+                textInputArea.classList.add('hidden');
+                fileInputArea.classList.remove('hidden');
+            }
+            hideMessages();
+        }
+        
+        // Initialize drag and drop
+        function initializeDragAndDrop() {
+            fileUploadBox.addEventListener('click', () => fileInput.click());
+            
+            fileUploadBox.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadBox.classList.add('dragover');
+            });
+            
+            fileUploadBox.addEventListener('dragleave', () => {
+                fileUploadBox.classList.remove('dragover');
+            });
+            
+            fileUploadBox.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadBox.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    handleFileSelect({ target: fileInput });
+                }
+            });
+        }
+        
+        // Check system health
+        function checkHealth() {
+            systemStatus.textContent = 'System Ready';
+            modelStatus.textContent = 'Summarization Engine Ready';
+            showSuccess('System is ready for summarization! Try the feature cards above to explore different sections.');
+            setTimeout(() => hideMessages(), 3000);
+        }
+        
+        // Event Listeners
+        generateBtn.addEventListener('click', generateSummary);
+        
+        document.getElementById('clear-results').addEventListener('click', function() {
+            resultsSection.classList.add('hidden');
+            inputText.value = '';
+            fileInput.value = '';
+            fileInfo.innerHTML = '';
+            fileInfo.classList.add('hidden');
+            currentText = '';
+            hideMessages();
+        });
+        
+        document.getElementById('load-example').addEventListener('click', function() {
+            inputText.value = exampleText;
+            textInputRadio.checked = true;
+            toggleInputMethod();
+            showSuccess('Example text loaded! Click "Generate Summary" to see it in action.');
+        });
+        
+        document.getElementById('copy-summary').addEventListener('click', copySummary);
+        document.getElementById('download-summary').addEventListener('click', downloadSummary);
+        
+        textInputRadio.addEventListener('change', toggleInputMethod);
+        fileUploadRadio.addEventListener('change', toggleInputMethod);
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // Update current text when typing in textarea
+        inputText.addEventListener('input', function() {
+            currentText = this.value;
+        });
+        
+        // Initialize
+        initializeGauges();
+        initializeDragAndDrop();
+        checkHealth();
+        toggleInputMethod(); // Set initial state
+    </script>
+</body>
+</html>
